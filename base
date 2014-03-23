@@ -1,0 +1,114 @@
+#!/bin/bash
+# This is some secure program that uses security.
+
+user=$USER
+myconfig=$(pwd)/myconfig/
+log_file=$(pwd)/log/
+baselog="${log_file}"/base.log
+errorlog="${log_file}"/error.log
+defaultuser=""
+list_package="xorg xserver-xorg-core xserver-xorg-video-all openbox menu obconf obmenu lightdm sudo lxsession"
+list_package_two="b43-fwcutter gdebi xfce4-power-manager vlc conky clipit catfish disk-manager transmission nitrogen libgl1-mesa-swx11 redshift alsa-base alsa-utils volti lxappearance rar unrar geany thunar-volman thunar-thumbnailers ffmpegthumbnailer thunar-archive-plugin thunar-media-tags-plugin terminator gmrun htop xfce4-screenshooter ttf-dejavu ttf-mscorefonts-installer gparted xfce4-volumed pulseaudio"
+
+cat /dev/null > "$baselog"
+cat /dev/null > "$errorlog"
+
+msg() {
+    echo "$1" | tee -a "$baselog"
+}
+
+confirm() {
+	msg "$1 (y/n)"; read answer;
+	if [ "$answer" == "y" ]; then	
+		return 1
+	elif [ "$answer" == "n" ]; then
+		return 0
+	elif [ -z "$answer" ] || [ "$answer" != "n" ] || [ "$answer" != "y" ]; then
+		confirm "$1"
+	fi
+}
+
+[[ $user = root ]] || {  msg "$user: Must be root!!" >&2; exit 1; }
+
+msg "########################## INSTALL ###########################"
+
+msg "######################## sources.list ########################"
+msg "--add-architecture i386"
+	dpkg --add-architecture i386
+msg "edit sources.list"
+	cat "${myconfig}"sources.list > /etc/apt/sources.list
+msg "apt-get update"
+	apt-get update 
+msg "apt-get dist-upgrade"
+	apt-get dist-upgrade
+msg "######################## sources.list ########################"
+
+confirm "Do you install list package" || {
+	msg "#################### Install list_package ####################"
+		apt-get --yes install "$list_package" &>>"$baselog"
+	msg "################## End install list_package ##################"
+}
+
+confirm "Do you add any user to sudouser" || {
+	msg "##################### ADDUSER to sudo ########################"
+	echo "Add user to sudo"
+	echo "-> "; read sudouser
+
+	adduser $sudouser sudo
+	msg "##################### $sudouser add sudo #####################"
+}
+
+confirm "Do you set default user in lightdm" || {
+	msg "################### Set default to lightdm ###################"
+		echo "What user set default in lightdm"
+		echo "-> "; read defaultuser
+	msg "chmod 775 lightdm.conf"
+		chmod 775 /etc/lightdm/lightdm.conf
+	msg "set lightdm.conf"
+		sed 's/usernamevariable/'"$defaultuser"'/' "${myconfig}"my-lightdmconfig > /etc/lightdm/lightdm.conf
+		cat /etc/lightdm/lightdm.conf >> "$baselog"
+	msg "chmod 755 lightdm.conf"
+		chmod 755 /etc/lightdm/lightdm.conf
+	msg "#################### Add user to lightdm #####################"
+	msg "######################## Edit .dmrc ##########################"
+	msg "chmod 777 .dmrc" 
+		chmod 777 /home/"$defaultuser"/.dmrc
+		cat "${myconfig}"my-dmrc > /home/"$defaultuser"/.dmrc
+	msg "chmod 555 .dmrc"
+		chmod 555 /home/"$defaultuser"/.dmrc
+	msg "####################### Edited .dmrc #########################"
+}
+
+confirm "Do you install list package" || {
+	msg "#################### Install list_package ####################"
+	apt-get --yes install "$list_package_two" &>>"$baselog"
+	msg "################## End install list_package ##################"
+}
+
+msg "########################## Synaptic ##########################"
+msg "Make dir /etc/X11/xorg.conf.d"
+	mkdir /etc/X11/xorg.conf.d 2>"$errorlog"
+msg "Make synaptics.conf"
+	cat "${myconfig}"synaptics.conf > /etc/X11/xorg.conf.d/synaptics.conf
+msg "######################## Add Synaptic ########################"
+
+msg "########################## Openbox ###########################"
+	mkdir /home/"$defaultuser"/.config && mkdir /home/"$defaultuser"/.config/openbox 2>>"$errorlog"
+	cp /etc/xdg/openbox/autostart /home/"$defaultuser"/.config/openbox
+	cat "${myconfig}"autostart >> /home/"$defaultuser"/.config/openbox/autostart
+	cat "${myconfig}"rc.xml >> /home/"$defaultuser"/.config/openbox/rc.xml
+	chown -R vlado /home/"$defaultuser"/.config
+msg "######################## End Openbox ##########################"
+
+msg "########################### Conky ############################"
+msg "Make .conkyrc"
+	cat "${myconfig}"conky > /home/"$defaultuser"/.conkyrc
+	chown vlado /home/"$defaultuser"/.conkyrc
+msg "######################### End Conky ##########################"
+
+msg "####################### b43-fwcutter #########################"
+	FIRMWARE_INSTALL_DIR="/lib/firmware"
+	wget http://www.lwfinger.com/b43-firmware/broadcom-wl-5.100.138.tar.bz2
+	tar xjf broadcom-wl-5.100.138.tar.bz2
+	b43-fwcutter -w "$FIRMWARE_INSTALL_DIR" broadcom-wl-5.100.138/linux/wl_apsta.o
+msg "##################### end b43-fwcutter #######################"

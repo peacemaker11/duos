@@ -97,14 +97,20 @@ msg "########################## Openbox ###########################"
 	cp /etc/xdg/openbox/autostart /home/"$defaultuser"/.config/openbox
 	cat "${myconfig}"autostart >> /home/"$defaultuser"/.config/openbox/autostart
 	cat "${myconfig}"rc.xml >> /home/"$defaultuser"/.config/openbox/rc.xml
-	chown -R vlado /home/"$defaultuser"/.config
+	chown -R "$defaultuser" /home/"$defaultuser"/.config
 msg "######################## End Openbox ##########################"
 
 msg "########################### Conky ############################"
 msg "Make .conkyrc"
 	cat "${myconfig}"conky > /home/"$defaultuser"/.conkyrc
-	chown vlado /home/"$defaultuser"/.conkyrc
+	chown "$defaultuser" /home/"$defaultuser"/.conkyrc
 msg "######################### End Conky ##########################"
+
+msg "############################ Git #############################"
+msg "Make .gitconfig"
+	cat "${myconfig}"gitconfig > /home/"$defaultuser"/.gitconfig
+	chown "$defaultuser" /home/"$defaultuser"/.gitconfig
+msg "########################## End Git ###########################"
 
 msg "####################### b43-fwcutter #########################"
 	FIRMWARE_INSTALL_DIR="/lib/firmware"

@@ -6,7 +6,7 @@ myconfig=$(pwd)/myconfig/
 log_file=$(pwd)/log/
 baselog="${log_file}"/base2.log
 errorlog="${log_file}"/error2.log
-list_package_two=(gdebi xfce4-power-manager vlc conky clipit catfish disk-manager transmission nitrogen libgl1-mesa-swx11 redshift alsa-base alsa-utils lxappearance file-roller geany thunar-volman thunar-thumbnailers ffmpegthumbnailer thunar-archive-plugin thunar-media-tags-plugin terminator gmrun htop xfce4-screenshooter ttf-dejavu ttf-mscorefonts-installer gparted xfce4-volumed pulseaudio iceweasel flashplugin-nonfree network-manager network-manager-gnome)
+list_package_two=(gdebi xfce4-power-manager vlc conky clipit catfish disk-manager transmission-gtk nitrogen libgl1-mesa-swx11 redshift alsa-base alsa-utils lxappearance file-roller geany thunar-volman thunar-thumbnailers ffmpegthumbnailer thunar-archive-plugin thunar-media-tags-plugin terminator gmrun htop xfce4-screenshooter ttf-dejavu ttf-mscorefonts-installer gparted xfce4-volumed pulseaudio iceweasel flashplugin-nonfree network-manager network-manager-gnome wbar)
 
 cat /dev/null > "$baselog"
 cat /dev/null > "$errorlog"

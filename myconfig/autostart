@@ -2,6 +2,7 @@
 xscreensaver -no-splash &&
 thunar --daemon &&
 nm-applet &&
+clipit &&
 xfce4-power-manager &&
 xfce4-volumed &&
 conky -q &&

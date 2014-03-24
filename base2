@@ -1,0 +1,73 @@
+#!/bin/bash
+# This is some secure program that uses security.
+
+defaultuser=$USER
+myconfig=$(pwd)/myconfig/
+log_file=$(pwd)/log/
+baselog="${log_file}"/base2.log
+errorlog="${log_file}"/error2.log
+list_package_two=(gdebi xfce4-power-manager vlc conky clipit catfish disk-manager transmission nitrogen libgl1-mesa-swx11 redshift alsa-base alsa-utils volti lxappearance file-roller geany thunar-volman thunar-thumbnailers ffmpegthumbnailer thunar-archive-plugin thunar-media-tags-plugin terminator gmrun htop xfce4-screenshooter ttf-dejavu ttf-mscorefonts-installer gparted xfce4-volumed pulseaudio iceweasel)
+
+cat /dev/null > "$baselog"
+cat /dev/null > "$errorlog"
+
+msg() {
+    echo "$1" | tee -a "$baselog"
+}
+
+confirm() {
+	msg "$1 (y/n)"; read answer;
+	if [ "$answer" == "y" ]; then	
+		return 1
+	elif [ "$answer" == "n" ]; then
+		return 0
+	elif [ -z "$answer" ] || [ "$answer" != "n" ] || [ "$answer" != "y" ]; then
+		confirm "$1"
+	fi
+}
+
+	msg "###################### INSTALL base 2 #########################"
+
+sudo chown "$defaultuser":"$defaultuser" -R $(pwd)
+
+confirm "Do you install list_package_two package" || {
+	msg "################## Install list_package_two ##################"
+		for i in "${list_package_two[@]}"; do
+			msg "Install $i"
+			sudo apt-get --yes install "$i" &>>"$baselog"
+		done
+	msg "################ End install list_package_two ################"
+}
+confirm "Add edit conkyrc" || {
+	msg "########################### Conky ############################"
+	msg "Make .conkyrc"
+		cat "${myconfig}"conky > /home/"$defaultuser"/.conkyrc
+		# chown "$defaultuser":"$defaultuser" /home/"$defaultuser"/.conkyrc
+	msg "######################### End Conky ##########################"
+}
+
+confirm "Add openbox autostart and rc.xml to home/$defaultuser/.config/openbox" || {
+	msg "########################## Openbox ###########################"
+		mkdir /home/"$defaultuser"/.config && mkdir /home/"$defaultuser"/.config/openbox 2>>"$errorlog"
+		sudo cp /etc/xdg/openbox/autostart /home/"$defaultuser"/.config/openbox
+		cat "${myconfig}"autostart >> /home/"$defaultuser"/.config/openbox/autostart
+		cat "${myconfig}"rc.xml >> /home/"$defaultuser"/.config/openbox/rc.xml
+		# chown -R "$defaultuser":"$defaultuser" /home/"$defaultuser"/.config
+	msg "######################## End Openbox ##########################"
+}
+
+confirm "add .gitconfig" || {
+	msg "############################ Git #############################"
+	echo "Username"; read username
+	echo "Mail"; read mail
+	msg "Make .gitconfig"
+		sed 's/defaultusername/'"$username"'/g;s/defaultmail/'"$mail"'/g' "${myconfig}"gitconfig > /home/"$defaultuser"/.gitconfig
+		# chown "$defaultuser":"$defaultuser" /home/"$defaultuser"/.gitconfig
+	msg "########################## End Git ###########################"
+}
+
+confirm "Set timezone" || {
+	msg "######################### timezone ###########################"
+		sudo dpkg-reconfigure tzdata
+	msg "####################### end timezone #########################"
+}

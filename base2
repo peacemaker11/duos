@@ -6,7 +6,7 @@ myconfig=$(pwd)/myconfig/
 log_file=$(pwd)/log/
 baselog="${log_file}"/base2.log
 errorlog="${log_file}"/error2.log
-list_package_two=(gdebi xfce4-power-manager vlc conky clipit catfish disk-manager transmission nitrogen libgl1-mesa-swx11 redshift alsa-base alsa-utils volti lxappearance file-roller geany thunar-volman thunar-thumbnailers ffmpegthumbnailer thunar-archive-plugin thunar-media-tags-plugin terminator gmrun htop xfce4-screenshooter ttf-dejavu ttf-mscorefonts-installer gparted xfce4-volumed pulseaudio iceweasel)
+list_package_two=(gdebi xfce4-power-manager vlc conky clipit catfish disk-manager transmission nitrogen libgl1-mesa-swx11 redshift alsa-base alsa-utils lxappearance file-roller geany thunar-volman thunar-thumbnailers ffmpegthumbnailer thunar-archive-plugin thunar-media-tags-plugin terminator gmrun htop xfce4-screenshooter ttf-dejavu ttf-mscorefonts-installer gparted xfce4-volumed pulseaudio iceweasel flashplugin-nonfree network-manager network-manager-gnome)
 
 cat /dev/null > "$baselog"
 cat /dev/null > "$errorlog"
@@ -33,6 +33,8 @@ confirm "Do you install list_package_two package" || {
 		for i in "${list_package_two[@]}"; do
 			msg "Install $i"
 			sudo apt-get --yes install "$i" &>>"$baselog"
+			msg "Build-dep $i"
+			sudo apt-get --yes build-dep "$i" &>>"$baselog"
 		done
 	msg "################ End install list_package_two ################"
 }
@@ -46,12 +48,21 @@ confirm "Add edit conkyrc" || {
 
 confirm "Add openbox autostart and rc.xml to home/$defaultuser/.config/openbox" || {
 	msg "########################## Openbox ###########################"
-		mkdir /home/"$defaultuser"/.config && mkdir /home/"$defaultuser"/.config/openbox 2>>"$errorlog"
+		mkdir /home/"$defaultuser"/.config
+		mkdir /home/"$defaultuser"/.config/openbox
 		sudo cp /etc/xdg/openbox/autostart /home/"$defaultuser"/.config/openbox
+		chown "$defaultuser":"$defaultuser" /home/"$defaultuser"/.config/openbox/autostart
 		cat "${myconfig}"autostart >> /home/"$defaultuser"/.config/openbox/autostart
 		cat "${myconfig}"rc.xml >> /home/"$defaultuser"/.config/openbox/rc.xml
 		# chown -R "$defaultuser":"$defaultuser" /home/"$defaultuser"/.config
 	msg "######################## End Openbox ##########################"
+}
+
+confirm "add .gitconfig" || {
+	msg "############################ Git #############################"
+		mkdir /home/"$defaultuser"/.config/tint2
+		cat "${myconfig}"tint2rc >> /home/"$defaultuser"/.config/tint2/tint2rc		
+	msg "########################## End Git ###########################"
 }
 
 confirm "add .gitconfig" || {

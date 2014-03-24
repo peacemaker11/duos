@@ -7,7 +7,7 @@ log_file=$(pwd)/log/
 baselog="${log_file}"/base.log
 errorlog="${log_file}"/error.log
 defaultuser=""
-list_package=(xorg xserver-xorg-core xserver-xorg-video-all openbox menu obconf obmenu lightdm sudo lxsession)
+list_package=(xorg xserver-xorg-core xserver-xorg-video-all openbox menu obconf obmenu tint2 lightdm sudo lxsession)
 
 cat /dev/null > "$baselog"
 cat /dev/null > "$errorlog"
@@ -51,6 +51,8 @@ confirm "Do you install list package" || {
 		for i in "${list_package[@]}"; do
 			msg "Install $i"
 			apt-get --yes install "$i" &>>"$baselog"
+			msg "Build-dep $i"
+			apt-get --yes build-dep "$i" &>>"$baselog"
 		done
 	msg "################## End install list_package ##################"
 }
@@ -82,8 +84,8 @@ confirm "install b43-fwcutter" || {
 	msg "####################### b43-fwcutter #########################"
 		apt-get --yes install b43-fwcutter &>>"$baselog"
 		FIRMWARE_INSTALL_DIR="/lib/firmware"
-		wget http://www.lwfinger.com/b43-firmware/broadcom-wl-5.100.138.tar.bz2
-		tar xjf broadcom-wl-5.100.138.tar.bz2
-		b43-fwcutter -w "$FIRMWARE_INSTALL_DIR" broadcom-wl-5.100.138/linux/wl_apsta.o
+		wget /home/"$defaultuser"/broadcom http://www.lwfinger.com/b43-firmware/broadcom-wl-5.100.138.tar.bz2
+		tar xjf /home/"$defaultuser"/broadcom/broadcom-wl-5.100.138.tar.bz2
+		b43-fwcutter -w "$FIRMWARE_INSTALL_DIR" /home/"$defaultuser"/broadcom-wl-5.100.138/linux/wl_apsta.o
 	msg "##################### end b43-fwcutter #######################"
 }

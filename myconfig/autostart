@@ -1,5 +1,7 @@
+(sleep 2s && tint2) &
 xscreensaver -no-splash &&
 thunar --daemon &&
+nm-applet &&
 xfce4-power-manager &&
 xfce4-volumed &&
 conky -q &&

@@ -8,7 +8,6 @@ baselog="${log_file}"/base.log
 errorlog="${log_file}"/error.log
 defaultuser=""
 list_package=(xorg xserver-xorg-core xserver-xorg-video-all openbox menu obconf obmenu lightdm sudo lxsession)
-list_package_two=(gdebi xfce4-power-manager vlc conky clipit catfish disk-manager transmission nitrogen libgl1-mesa-swx11 redshift alsa-base alsa-utils volti lxappearance file-roller geany thunar-volman thunar-thumbnailers ffmpegthumbnailer thunar-archive-plugin thunar-media-tags-plugin terminator gmrun htop xfce4-screenshooter ttf-dejavu ttf-mscorefonts-installer gparted xfce4-volumed pulseaudio iceweasel)
 
 cat /dev/null > "$baselog"
 cat /dev/null > "$errorlog"

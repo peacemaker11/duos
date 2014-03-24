@@ -8,7 +8,7 @@ baselog="${log_file}"/base.log
 errorlog="${log_file}"/error.log
 defaultuser=""
 list_package=(xorg xserver-xorg-core xserver-xorg-video-all openbox menu obconf obmenu lightdm sudo lxsession)
-list_package_two=(b43-fwcutter gdebi xfce4-power-manager vlc conky clipit catfish disk-manager transmission nitrogen libgl1-mesa-swx11 redshift alsa-base alsa-utils volti lxappearance file-roller geany thunar-volman thunar-thumbnailers ffmpegthumbnailer thunar-archive-plugin thunar-media-tags-plugin terminator gmrun htop xfce4-screenshooter ttf-dejavu ttf-mscorefonts-installer gparted xfce4-volumed pulseaudio iceweasel)
+list_package_two=(gdebi xfce4-power-manager vlc conky clipit catfish disk-manager transmission nitrogen libgl1-mesa-swx11 redshift alsa-base alsa-utils volti lxappearance file-roller geany thunar-volman thunar-thumbnailers ffmpegthumbnailer thunar-archive-plugin thunar-media-tags-plugin terminator gmrun htop xfce4-screenshooter ttf-dejavu ttf-mscorefonts-installer gparted xfce4-volumed pulseaudio iceweasel)
 
 cat /dev/null > "$baselog"
 cat /dev/null > "$errorlog"
@@ -49,7 +49,7 @@ confirm "Do you install list package" || {
 	msg "#################### Install list_package ####################"
 		for i in "${list_package[@]}"; do
 			msg "Install $i"
-			apt-get --yes --simulate install "$i" &>>"$baselog"
+			apt-get --yes install "$i" &>>"$baselog"
 		done
 	msg "################## End install list_package ##################"
 }
@@ -72,7 +72,7 @@ confirm "Do you install list_package_two package" || {
 	msg "################## Install list_package_two ##################"
 		for i in "${list_package_two[@]}"; do
 			msg "Install $i"
-			apt-get --yes --simulate install "$i" &>>"$baselog"
+			apt-get --yes install "$i" &>>"$baselog"
 		done
 	msg "################ End install list_package_two ################"
 }
@@ -114,8 +114,9 @@ confirm "add .gitconfig" || {
 	msg "########################## End Git ###########################"
 }
 
-confirm "add b43-fwcutter" || {
+confirm "install b43-fwcutter" || {
 	msg "####################### b43-fwcutter #########################"
+		apt-get --yes install b43-fwcutter &>>"$baselog"
 		FIRMWARE_INSTALL_DIR="/lib/firmware"
 		wget http://www.lwfinger.com/b43-firmware/broadcom-wl-5.100.138.tar.bz2
 		tar xjf broadcom-wl-5.100.138.tar.bz2

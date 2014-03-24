@@ -38,7 +38,7 @@ confirm "Do you install list_package_two package" || {
 		done
 	msg "################ End install list_package_two ################"
 }
-confirm "Add edit conkyrc" || {
+confirm "Add conkyrc" || {
 	msg "########################### Conky ############################"
 	msg "Make .conkyrc"
 		cat "${myconfig}"conky > /home/"$defaultuser"/.conkyrc
@@ -58,14 +58,14 @@ confirm "Add openbox autostart and rc.xml to home/$defaultuser/.config/openbox" 
 	msg "######################## End Openbox ##########################"
 }
 
-confirm "add .gitconfig" || {
-	msg "############################ Git #############################"
+confirm "Set tint 2" || {
+	msg "########################### tint2 ############################"
 		mkdir /home/"$defaultuser"/.config/tint2
 		cat "${myconfig}"tint2rc >> /home/"$defaultuser"/.config/tint2/tint2rc		
-	msg "########################## End Git ###########################"
+	msg "######################### End tint2 ##########################"
 }
 
-confirm "add .gitconfig" || {
+confirm "Set .gitconfig" || {
 	msg "############################ Git #############################"
 	echo "Username"; read username
 	echo "Mail"; read mail
@@ -79,4 +79,10 @@ confirm "Set timezone" || {
 	msg "######################### timezone ###########################"
 		sudo dpkg-reconfigure tzdata
 	msg "####################### end timezone #########################"
+}
+
+confirm "Set redshift" || {
+	msg "######################### redshift ###########################"
+		redshift -l 50:15 -t 5500:4200
+	msg "####################### end redshift #########################"
 }

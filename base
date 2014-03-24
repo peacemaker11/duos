@@ -33,6 +33,8 @@ confirm() {
 msg "######################## INSTALL base ########################"
 echo "Set default for user"; read defaultuser
 
+sudo chown "$defaultuser":"$defaultuser" -R $(pwd)
+
 confirm "edit source list?" || {
 	msg "######################## sources.list ########################"
 	msg "--add-architecture i386"

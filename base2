@@ -28,8 +28,6 @@ confirm() {
 
 	msg "###################### INSTALL base 2 #########################"
 
-sudo chown "$defaultuser":"$defaultuser" -R $(pwd)
-
 confirm "Do you install list_package_two package" || {
 	msg "################## Install list_package_two ##################"
 		for i in "${list_package_two[@]}"; do

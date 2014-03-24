@@ -57,26 +57,15 @@ confirm "Do you install list package" || {
 confirm "Do you add any user to sudouser" || {
 	msg "##################### ADDUSER to sudo ########################"
 		adduser "$defaultuser" sudo
-	msg "##################### $defaultuser add sudo #####################"
+	msg "################## $defaultuser add sudo #####################"
 }
 
 confirm "Do you set default user in lightdm" || {
 	msg "################### Set default to lightdm ###################"
-	msg "chmod 775 lightdm.conf"
-		chmod 775 /etc/lightdm/lightdm.conf
 	msg "set lightdm.conf"
 		sed 's/usernamevariable/'"$defaultuser"'/' "${myconfig}"my-lightdmconfig > /etc/lightdm/lightdm.conf
 		cat /etc/lightdm/lightdm.conf >> "$baselog"
-	msg "chmod 755 lightdm.conf"
-		chmod 755 /etc/lightdm/lightdm.conf
 	msg "#################### Add user to lightdm #####################"
-	msg "######################## Edit .dmrc ##########################"
-	msg "chmod 777 .dmrc" 
-		chmod 777 /home/"$defaultuser"/.dmrc
-		cat "${myconfig}"my-dmrc > /home/"$defaultuser"/.dmrc
-	msg "chmod 555 .dmrc"
-		chmod 555 /home/"$defaultuser"/.dmrc
-	msg "####################### Edited .dmrc #########################"
 }
 
 confirm "Do you install list_package_two package" || {
@@ -103,7 +92,7 @@ confirm "Add openbox autostart and rc.xml to home/$defaultuser/.config/openbox" 
 		cp /etc/xdg/openbox/autostart /home/"$defaultuser"/.config/openbox
 		cat "${myconfig}"autostart >> /home/"$defaultuser"/.config/openbox/autostart
 		cat "${myconfig}"rc.xml >> /home/"$defaultuser"/.config/openbox/rc.xml
-		chown -R "$defaultuser" /home/"$defaultuser"/.config
+		chown -R "$defaultuser":"$defaultuser" /home/"$defaultuser"/.config
 	msg "######################## End Openbox ##########################"
 }
 
@@ -111,7 +100,7 @@ confirm "Add edit conkyrc" || {
 	msg "########################### Conky ############################"
 	msg "Make .conkyrc"
 		cat "${myconfig}"conky > /home/"$defaultuser"/.conkyrc
-		chown "$defaultuser" /home/"$defaultuser"/.conkyrc
+		chown "$defaultuser":"$defaultuser" /home/"$defaultuser"/.conkyrc
 	msg "######################### End Conky ##########################"
 }
 
@@ -121,7 +110,7 @@ confirm "add .gitconfig" || {
 	echo "Mail"; read mail
 	msg "Make .gitconfig"
 		sed 's/defaultusername/'"$username"'/g;s/defaultmail/'"$mail"'/g' "${myconfig}"gitconfig > /home/"$defaultuser"/.gitconfig
-		chown "$defaultuser" /home/"$defaultuser"/.gitconfig
+		chown "$defaultuser":"$defaultuser" /home/"$defaultuser"/.gitconfig
 	msg "########################## End Git ###########################"
 }
 
@@ -132,4 +121,10 @@ confirm "add b43-fwcutter" || {
 		tar xjf broadcom-wl-5.100.138.tar.bz2
 		b43-fwcutter -w "$FIRMWARE_INSTALL_DIR" broadcom-wl-5.100.138/linux/wl_apsta.o
 	msg "##################### end b43-fwcutter #######################"
+}
+
+confirm "Set timezone" || {
+	msg "######################### timezone ###########################"
+		dpkg-reconfigure tzdata
+	msg "####################### end timezone #########################"
 }

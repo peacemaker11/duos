@@ -1,4 +1,5 @@
 xscreensaver -no-splash &&
+thunar --daemon &&
 xfce4-power-manager &&
 xfce4-volumed &&
 conky -q &&

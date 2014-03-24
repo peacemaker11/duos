@@ -30,8 +30,8 @@ confirm() {
 
 [[ $user = root ]] || {  msg "$user: Must be root!!" >&2; exit 1; }
 
-msg "########################## INSTALL ###########################"
-echo "Set default user"; read defaultuser
+msg "######################## INSTALL base ########################"
+echo "Set default for user"; read defaultuser
 
 confirm "edit source list?" || {
 	msg "######################## sources.list ########################"
@@ -68,15 +68,6 @@ confirm "Do you set default user in lightdm" || {
 	msg "#################### Add user to lightdm #####################"
 }
 
-confirm "Do you install list_package_two package" || {
-	msg "################## Install list_package_two ##################"
-		for i in "${list_package_two[@]}"; do
-			msg "Install $i"
-			apt-get --yes install "$i" &>>"$baselog"
-		done
-	msg "################ End install list_package_two ################"
-}
-
 confirm "Add synaptic to xorg.conf.d" || {
 	msg "########################## Synaptic ##########################"
 	msg "Make dir /etc/X11/xorg.conf.d"
@@ -84,34 +75,6 @@ confirm "Add synaptic to xorg.conf.d" || {
 	msg "Make synaptics.conf"
 		cat "${myconfig}"synaptics.conf > /etc/X11/xorg.conf.d/synaptics.conf
 	msg "######################## Add Synaptic ########################"
-}
-
-confirm "Add openbox autostart and rc.xml to home/$defaultuser/.config/openbox" || {
-	msg "########################## Openbox ###########################"
-		mkdir /home/"$defaultuser"/.config && mkdir /home/"$defaultuser"/.config/openbox 2>>"$errorlog"
-		cp /etc/xdg/openbox/autostart /home/"$defaultuser"/.config/openbox
-		cat "${myconfig}"autostart >> /home/"$defaultuser"/.config/openbox/autostart
-		cat "${myconfig}"rc.xml >> /home/"$defaultuser"/.config/openbox/rc.xml
-		chown -R "$defaultuser":"$defaultuser" /home/"$defaultuser"/.config
-	msg "######################## End Openbox ##########################"
-}
-
-confirm "Add edit conkyrc" || {
-	msg "########################### Conky ############################"
-	msg "Make .conkyrc"
-		cat "${myconfig}"conky > /home/"$defaultuser"/.conkyrc
-		chown "$defaultuser":"$defaultuser" /home/"$defaultuser"/.conkyrc
-	msg "######################### End Conky ##########################"
-}
-
-confirm "add .gitconfig" || {
-	msg "############################ Git #############################"
-	echo "Username"; read username
-	echo "Mail"; read mail
-	msg "Make .gitconfig"
-		sed 's/defaultusername/'"$username"'/g;s/defaultmail/'"$mail"'/g' "${myconfig}"gitconfig > /home/"$defaultuser"/.gitconfig
-		chown "$defaultuser":"$defaultuser" /home/"$defaultuser"/.gitconfig
-	msg "########################## End Git ###########################"
 }
 
 confirm "install b43-fwcutter" || {
@@ -122,10 +85,4 @@ confirm "install b43-fwcutter" || {
 		tar xjf broadcom-wl-5.100.138.tar.bz2
 		b43-fwcutter -w "$FIRMWARE_INSTALL_DIR" broadcom-wl-5.100.138/linux/wl_apsta.o
 	msg "##################### end b43-fwcutter #######################"
-}
-
-confirm "Set timezone" || {
-	msg "######################### timezone ###########################"
-		dpkg-reconfigure tzdata
-	msg "####################### end timezone #########################"
 }

@@ -7,7 +7,7 @@ imlib_cache_size 10
 
 # Window specifications #
 alignment tr
-gap_x 100
+gap_x 10
 gap_y 70
 minimum_size 268 620
 maximum_width 268
@@ -101,8 +101,8 @@ ${voffset 294}${goto 40}${color4}Cpu:${color}
 ${voffset 4}${goto 40}${color4}Mem:${color}
 ${voffset 4}${goto 40}${color4}Swap:${color}
 ${voffset -47}${alignr 39}${color1}${cpu cpu0}%${color}
-${voffset 4}${alignr 39}${color1}${memperc}%${color}
-${voffset 4}${alignr 39}${color1}${swapperc}%${color}
+${voffset 4}${alignr 39}${color1}${mem}${color}
+${voffset 4}${alignr 39}${color1}${swap}${color}
 ${voffset -47}${alignc}${color5}${cpubar 5,36}${color}
 ${voffset 4}${alignc}${color5}${membar 5,36}${color}
 ${voffset 4}${alignc}${color5}${swapbar 5,36}${color}

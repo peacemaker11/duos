@@ -1,0 +1,6 @@
+conky -q &
+xfce4-power-manager &
+redshift -l 50:15 -t 5500:4200 &
+thunar --daemon &
+xfce4-volumed &
+nm-applet &

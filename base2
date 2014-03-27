@@ -42,15 +42,18 @@ if confirm "Add conkyrc"; then
 	msg "######################### End Conky ##########################"
 fi
 
-if confirm "Add openbox autostart and rc.xml to home/$defaultuser/.config/openbox"; then
+if confirm "Set openbox rc.xml"; then
 	msg "########################## Openbox ###########################"
-		# if [ ! -d "$HOME/.config/openbox" ]; then
-		# 	mkdir -p "$HOME/.config/openbox"
-		# fi
-		# sudo cp /etc/xdg/openbox/autostart "$HOME/.config/openbox"
-		# chown "$defaultuser":"$defaultuser" "$HOME/.config/openbox/autostart"
-		# cat "$myconfig/autostart" >> "$HOME/.config/openbox/autostart"
+		mkdir -p "$HOME/.config/openbox"
 		cat "$myconfig/rc.xml" > "$HOME/.config/openbox/lxde-rc.xml"
+	msg "######################## End Openbox ##########################"
+fi
+
+if confirm "Set openbox "; then
+	msg "########################## Openbox ###########################"
+		sudo cp /etc/xdg/openbox/autostart "$HOME/.config/openbox"
+		chown "$USER":"$USER" "$HOME/.config/openbox/autostart"
+		cat "$myconfig/openbox_autostart" >> "$HOME/.config/openbox/autostart"
 	msg "######################## End Openbox ##########################"
 fi
 
@@ -84,4 +87,10 @@ fi
 if confirm "Downloads Sublime Text 3"; then
 	wget -P "$PWD/downloads" http://c758482.r82.cf2.rackcdn.com/sublime-text_build-3059_amd64.deb
 	sudo dpkg -i "$PWD/downloads/sublime-text_build-3059_amd64.deb"
+fi
+
+
+if confirm "Set autostart LXDE"; then
+	mkdir -p "$HOME/.config/autostart"
+	cp -R -t "$HOME/.config/autostart" "$myconfig/autostart" 
 fi

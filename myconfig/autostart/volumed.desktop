@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Volumed Xfce4
+Comment=Volumed
+Icon=application-x-executable
+Exec=xfce4-volumed
+Terminal=false
+Type=Application

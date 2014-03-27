@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=redshift
+Comment=redshift
+Icon=application-x-executable
+Exec=redshift -l 50:15 -t 5500:4200
+Terminal=false
+Type=Application

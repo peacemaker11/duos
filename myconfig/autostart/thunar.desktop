@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Thunar
+Comment=Thunar deamon
+Icon=Thunar
+Exec=thunar --daemon
+Terminal=false
+Type=Application

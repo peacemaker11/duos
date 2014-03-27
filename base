@@ -1,40 +1,26 @@
 #!/bin/bash
-# This is some secure program that uses security.
 
-user=$USER
-myconfig=$(pwd)/myconfig/
-log_file=$(pwd)/log/
-baselog="${log_file}"/base.log
-errorlog="${log_file}"/error.log
-defaultuser=""
-list_package=(xorg xserver-xorg-core xserver-xorg-video-all openbox menu obconf obmenu tint2 lightdm sudo lxsession)
+source variable
 
 cat /dev/null > "$baselog"
 cat /dev/null > "$errorlog"
 
-msg() {
-    echo "$1" | tee -a "$baselog"
-}
+if test $USER != "root"; then
+	msg "$USER: Must be root!!" >&2
+	exit 1
+fi
 
-confirm() {
-	msg "$1 (y/n)"; read answer;
-	if [ "$answer" == "y" ]; then	
-		return 1
-	elif [ "$answer" == "n" ]; then
-		return 0
-	elif [ -z "$answer" ] || [ "$answer" != "n" ] || [ "$answer" != "y" ]; then
-		confirm "$1"
-	fi
-}
+if [ ! -d "$PWD/downloads" ]; then
+	mkdir -p "$PWD/downloads"
+fi
 
-[[ $user = root ]] || {  msg "$user: Must be root!!" >&2; exit 1; }
+msg "
+######################## INSTALL base ########################
+"
 
-msg "######################## INSTALL base ########################"
 echo "Set default for user"; read defaultuser
 
-sudo chown "$defaultuser":"$defaultuser" -R $(pwd)
-
-confirm "edit source list?" || {
+if confirm "edit source list?"; then
 	msg "######################## sources.list ########################"
 	msg "--add-architecture i386"
 		dpkg --add-architecture i386
@@ -45,47 +31,36 @@ confirm "edit source list?" || {
 	msg "apt-get dist-upgrade"
 		apt-get dist-upgrade
 	msg "######################## sources.list ########################"
-}
-confirm "Do you install list package" || {
-	msg "#################### Install list_package ####################"
-		for i in "${list_package[@]}"; do
-			msg "Install $i"
-			apt-get --yes install "$i" &>>"$baselog"
-			msg "Build-dep $i"
-			apt-get --yes build-dep "$i" &>>"$baselog"
-		done
-	msg "################## End install list_package ##################"
-}
+fi
 
-confirm "Do you add any user to sudouser" || {
+if confirm "Do you add any user to sudouser"; then
 	msg "##################### ADDUSER to sudo ########################"
 		adduser "$defaultuser" sudo
 	msg "################## $defaultuser add sudo #####################"
-}
+fi
 
-confirm "Do you set default user in lightdm" || {
+if confirm "Do you set default user in lightdm"; then
 	msg "################### Set default to lightdm ###################"
 	msg "set lightdm.conf"
-		sed 's/usernamevariable/'"$defaultuser"'/' "${myconfig}"my-lightdmconfig > /etc/lightdm/lightdm.conf
-		cat /etc/lightdm/lightdm.conf >> "$baselog"
+		sed 's/usernamevariable/'"$defaultuser"'/' "$myconfig/lightdm.config" > /etc/lightdm/lightdm.conf
 	msg "#################### Add user to lightdm #####################"
-}
+fi
 
-confirm "Add synaptic to xorg.conf.d" || {
+if confirm "Add synaptic to xorg.conf.d"; then
 	msg "########################## Synaptic ##########################"
 	msg "Make dir /etc/X11/xorg.conf.d"
 		mkdir /etc/X11/xorg.conf.d 2>"$errorlog"
 	msg "Make synaptics.conf"
 		cat "${myconfig}"synaptics.conf > /etc/X11/xorg.conf.d/synaptics.conf
 	msg "######################## Add Synaptic ########################"
-}
+fi 
 
-confirm "install b43-fwcutter" || {
+if confirm "install b43-fwcutter"; then
 	msg "####################### b43-fwcutter #########################"
-		apt-get --yes install b43-fwcutter &>>"$baselog"
+		apt-get --yes install b43-fwcutter 2>>"$errorlog"
 		FIRMWARE_INSTALL_DIR="/lib/firmware"
-		wget /home/"$defaultuser"/broadcom http://www.lwfinger.com/b43-firmware/broadcom-wl-5.100.138.tar.bz2
-		tar xjf /home/"$defaultuser"/broadcom/broadcom-wl-5.100.138.tar.bz2
-		b43-fwcutter -w "$FIRMWARE_INSTALL_DIR" /home/"$defaultuser"/broadcom-wl-5.100.138/linux/wl_apsta.o
+		wget -P "$PWD/downloads" http://www.lwfinger.com/b43-firmware/broadcom-wl-5.100.138.tar.bz2
+		tar -xjf "$PWD/downloads/broadcom-wl-5.100.138.tar.bz2" -C "$PWD/downloads"
+		b43-fwcutter -w "$FIRMWARE_INSTALL_DIR" "$PWD/downloads/broadcom-wl-5.100.138/linux/wl_apsta.o"
 	msg "##################### end b43-fwcutter #######################"
-}
+fi

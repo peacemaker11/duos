@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Power manager
+Comment=Clipboard Manager
+Icon=application-x-executable
+Exec=xfce4-power-manager
+Terminal=false
+Type=Application

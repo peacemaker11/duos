@@ -1,0 +1,18 @@
+myconfig="$PWD/myconfig/"
+baselog="$PWD/log/base.log"
+errorlog="$PWD/log/error.log"
+
+msg() {
+    echo "$1" | tee -a "$baselog"
+}
+
+confirm() {
+	msg "$1 (y/n)"; read answer;
+	if [ "$answer" == "y" ]; then	
+		return 0
+	elif [ "$answer" == "n" ]; then
+		return 1
+	elif [ -z "$answer" ] || [ "$answer" != "n" ] || [ "$answer" != "y" ]; then
+		confirm "$1"
+	fi
+}

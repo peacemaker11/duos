@@ -1,88 +1,87 @@
 #!/bin/bash
-# This is some secure program that uses security.
 
-defaultuser=$USER
-myconfig=$(pwd)/myconfig/
-log_file=$(pwd)/log/
-baselog="${log_file}"/base2.log
-errorlog="${log_file}"/error2.log
-list_package_two=(gdebi xfce4-power-manager vlc conky clipit catfish disk-manager transmission-gtk nitrogen libgl1-mesa-swx11 redshift alsa-base alsa-utils lxappearance file-roller geany thunar-volman thunar-thumbnailers ffmpegthumbnailer thunar-archive-plugin thunar-media-tags-plugin terminator gmrun htop xfce4-screenshooter ttf-dejavu ttf-mscorefonts-installer gparted xfce4-volumed pulseaudio iceweasel flashplugin-nonfree network-manager network-manager-gnome wbar)
+source variable
 
-cat /dev/null > "$baselog"
-cat /dev/null > "$errorlog"
+remove_package=(leafpad lxterminal xarchiver pcmanfm)
+install_package=(gdebi xfce4-power-manager vlc conky clipit catfish disk-manager transmission-gtk nitrogen libgl1-mesa-swx11 redshift alsa-base alsa-utils lxappearance file-roller geany thunar-volman thunar-thumbnailers ffmpegthumbnailer thunar-archive-plugin thunar-media-tags-plugin terminator gmrun htop xfce4-screenshooter ttf-dejavu ttf-mscorefonts-installer gparted xfce4-volumed pulseaudio icedove flashplugin-nonfree curl)
 
-msg() {
-    echo "$1" | tee -a "$baselog"
-}
+msg "
+###################### INSTALL base 2 #########################
+"
 
-confirm() {
-	msg "$1 (y/n)"; read answer;
-	if [ "$answer" == "y" ]; then	
-		return 1
-	elif [ "$answer" == "n" ]; then
-		return 0
-	elif [ -z "$answer" ] || [ "$answer" != "n" ] || [ "$answer" != "y" ]; then
-		confirm "$1"
-	fi
-}
-
-	msg "###################### INSTALL base 2 #########################"
-
-confirm "Do you install list_package_two package" || {
-	msg "################## Install list_package_two ##################"
-		for i in "${list_package_two[@]}"; do
-			msg "Install $i"
-			sudo apt-get --yes install "$i" &>>"$baselog"
-			msg "Build-dep $i"
-			sudo apt-get --yes build-dep "$i" &>>"$baselog"
+if confirm "Do you remove package"; then
+	msg "###################### Remove package  ########################"
+		for i in "${remove_package[@]}"; do
+			msg "Remove $i"
+			sudo apt-get --yes remove --purge "$i" 2>>"$errorlog"
+			msg "Purge $i"
+			sudo apt-get --yes purge "$i" 2>>"$errorlog"
 		done
-	msg "################ End install list_package_two ################"
-}
-confirm "Add conkyrc" || {
+	msg "##################### End remove package ######################"
+fi
+
+if confirm "Do you install install_package package"; then
+	msg "################### Install install_package ###################"
+		for i in "${install_package[@]}"; do
+			msg "Install $i"
+			sudo apt-get --yes install "$i" 2>>"$errorlog"
+			msg "Build-dep $i"
+			sudo apt-get --yes build-dep "$i" 2>>"$errorlog"
+		done
+	msg "################# End install install_package #################"
+fi
+
+if confirm "Add conkyrc"; then
 	msg "########################### Conky ############################"
 	msg "Make .conkyrc"
-		cat "${myconfig}"conky > /home/"$defaultuser"/.conkyrc
-		# chown "$defaultuser":"$defaultuser" /home/"$defaultuser"/.conkyrc
+		mkdir -p "$PWD/downloads/harmattan"
+		wget -P "$PWD/downloads" http://fc07.deviantart.net/fs71/f/2014/013/2/8/conky_harmattan_by_zagortenay333-d720use.zip
+		file-roller -e "$PWD/downloads/harmattan" "$PWD/downloads/conky_harmattan_by_zagortenay333-d720use.zip"
+		cp -R -t "$HOME" "$PWD/downloads/harmattan/.conky-weather"
+		cat "$myconfig/conkyrc" > "$HOME/.conkyrc"
 	msg "######################### End Conky ##########################"
-}
+fi
 
-confirm "Add openbox autostart and rc.xml to home/$defaultuser/.config/openbox" || {
+if confirm "Add openbox autostart and rc.xml to home/$defaultuser/.config/openbox"; then
 	msg "########################## Openbox ###########################"
-		mkdir /home/"$defaultuser"/.config
-		mkdir /home/"$defaultuser"/.config/openbox
-		sudo cp /etc/xdg/openbox/autostart /home/"$defaultuser"/.config/openbox
-		chown "$defaultuser":"$defaultuser" /home/"$defaultuser"/.config/openbox/autostart
-		cat "${myconfig}"autostart >> /home/"$defaultuser"/.config/openbox/autostart
-		cat "${myconfig}"rc.xml >> /home/"$defaultuser"/.config/openbox/rc.xml
-		# chown -R "$defaultuser":"$defaultuser" /home/"$defaultuser"/.config
+		# if [ ! -d "$HOME/.config/openbox" ]; then
+		# 	mkdir -p "$HOME/.config/openbox"
+		# fi
+		# sudo cp /etc/xdg/openbox/autostart "$HOME/.config/openbox"
+		# chown "$defaultuser":"$defaultuser" "$HOME/.config/openbox/autostart"
+		# cat "$myconfig/autostart" >> "$HOME/.config/openbox/autostart"
+		cat "$myconfig/rc.xml" > "$HOME/.config/openbox/lxde-rc.xml"
 	msg "######################## End Openbox ##########################"
-}
+fi
 
-confirm "Set tint 2" || {
-	msg "########################### tint2 ############################"
-		mkdir /home/"$defaultuser"/.config/tint2
-		cat "${myconfig}"tint2rc >> /home/"$defaultuser"/.config/tint2/tint2rc		
-	msg "######################### End tint2 ##########################"
-}
-
-confirm "Set .gitconfig" || {
+if confirm "Set .gitconfig"; then
 	msg "############################ Git #############################"
 	echo "Username"; read username
 	echo "Mail"; read mail
 	msg "Make .gitconfig"
-		sed 's/defaultusername/'"$username"'/g;s/defaultmail/'"$mail"'/g' "${myconfig}"gitconfig > /home/"$defaultuser"/.gitconfig
-		# chown "$defaultuser":"$defaultuser" /home/"$defaultuser"/.gitconfig
+		sed 's/defaultusername/'"$username"'/g;s/defaultmail/'"$mail"'/g' "${myconfig}"gitconfig > "$HOME/.gitconfig"
 	msg "########################## End Git ###########################"
-}
+fi
 
-confirm "Set timezone" || {
+if confirm "Set timezone"; then
 	msg "######################### timezone ###########################"
 		sudo dpkg-reconfigure tzdata
 	msg "####################### end timezone #########################"
-}
+fi
 
-confirm "Set redshift" || {
-	msg "######################### redshift ###########################"
-		redshift -l 50:15 -t 5500:4200
-	msg "####################### end redshift #########################"
-}
+if confirm "Downloads theme" ; then
+	mkdir -p "$HOME/.themes"
+	wget -P "$PWD/downloads" http://fc04.deviantart.net/fs70/f/2010/231/b/e/bumheadtrois_openbox_theme_by_1bumnote.zip
+	file-roller -e "$HOME/.themes" "$PWD/downloads/bumheadtrois_openbox_theme_by_1bumnote.zip"
+fi
+
+if confirm "Downloads Icons"; then
+	mkdir -p "$HOME/.icons"
+	wget --content-disposition -P "$PWD/downloads" http://ubuntuone.com/2PCEQoHYUchMck1vxAtAC9
+	file-roller -e "$HOME/.icons" "$PWD/downloads/Square.tar.gz"
+fi
+
+if confirm "Downloads Sublime Text 3"; then
+	wget -P "$PWD/downloads" http://c758482.r82.cf2.rackcdn.com/sublime-text_build-3059_amd64.deb
+	sudo dpkg -i "$PWD/downloads/sublime-text_build-3059_amd64.deb"
+fi

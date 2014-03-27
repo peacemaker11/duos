@@ -7,3 +7,6 @@ deb-src [arch=amd64,i386] http://security.debian.org/ wheezy/updates main contri
 # wheezy-updates, previously known as 'volatile'
 deb [arch=amd64,i386] http://ftp.uk.debian.org/debian/ wheezy-updates main contrib non-free
 deb-src [arch=amd64,i386] http://ftp.uk.debian.org/debian/ wheezy-updates main contrib non-free
+
+deb [arch=amd64,i386] http://ftp.uk.debian.org/debian/ wheezy-backports main contrib non-free
+deb [arch=amd64,i386] http://ftp.uk.debian.org/debian/ wheezy-backports main contrib non-free

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Conkyrc
+Comment=conky
+Icon=application-x-executable
+Exec=conky -q
+Terminal=false
+Type=Application
